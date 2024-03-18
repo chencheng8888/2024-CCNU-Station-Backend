@@ -1,9 +1,7 @@
 package chathandler
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"gorm.io/gorm"
 	"guizizhan/common"
 	"guizizhan/model/chat"
@@ -14,23 +12,26 @@ func Hub(db *gorm.DB) {
 		fmt.Println("<-----监听通信管道----->")
 		select {
 		case conn := <-chat.Manager.Register:
-			replymsg := chat.ReplyMsg{
-				Code:    common.WebsocketSuccess,
-				Content: "已连接至服务器",
-				From:    "SYSTEM",
+			if conn.SendID!=""{
+				replymsg := chat.CreateReplymsg(common.WebsocketSuccess, "SYSTEM", common.MsgFlags[common.WebsocketSuccess])
+				chat.SendReplyMsg(conn, replymsg)
+				chat.Manager.Clients[conn.ID] = conn
+			}else{
+				replymsg := chat.CreateReplymsg(common.WebsocketSuccess, "SYSTEM", common.MsgFlags[common.WebsocketSuccess])
+				chat.SendReplyMsg(conn, replymsg)
+				chat.Manager.GroupBasic[conn.GroupID] = conn
 			}
-			msg, _ := json.Marshal(replymsg)
-			conn.Socket.WriteMessage(websocket.TextMessage, msg)
-			chat.Manager.Clients[conn.ID] = conn
+
 		case conn := <-chat.Manager.Unregister:
-			replymsg := chat.ReplyMsg{
-				Code:    common.WebsocketEnd,
-				From:    "SYSTEM",
-				Content: "连接断开",
+			if conn.SendID!=""{
+				replymsg := chat.CreateReplymsg(common.WebsocketEnd, "SYSTEM", common.MsgFlags[common.WebsocketEnd])
+				chat.SendReplyMsg(conn, replymsg)
+				delete(chat.Manager.Clients, conn.ID)
+			}else{
+				replymsg := chat.CreateReplymsg(common.WebsocketEnd, "SYSTEM", common.MsgFlags[common.WebsocketEnd])
+				chat.SendReplyMsg(conn, replymsg)
+				delete(chat.Manager.GroupBasic, conn.GroupID)
 			}
-			msg, _ := json.Marshal(replymsg)
-			conn.Socket.WriteMessage(websocket.TextMessage, msg)
-			delete(chat.Manager.Clients, conn.ID)
 		case broadcast := <-chat.Manager.Broadcast:
 			message := broadcast.Message
 			id := broadcast.Client.ID
@@ -48,22 +49,12 @@ func Hub(db *gorm.DB) {
 				}
 			}
 			if flag {
-				repltmsg := chat.ReplyMsg{
-					Code:    common.WebsocketOnlineReply,
-					From:    "SYSTEM",
-					Content: "对方在线应答",
-				}
-				msg, _ := json.Marshal(repltmsg)
-				broadcast.Client.Socket.WriteMessage(websocket.TextMessage, msg)
+				replymsg := chat.CreateReplymsg(common.WebsocketOnlineReply, "SYSTEM", common.MsgFlags[common.WebsocketOnlineReply])
+				chat.SendReplyMsg(broadcast.Client, replymsg)
 				StoreMsg(db, id, fmt.Sprintf("%s", string(message)))
 			} else {
-				replymsg := chat.ReplyMsg{
-					Code:    common.WebsocketOfflineReply,
-					From:    "SYSTEM",
-					Content: "对方不在线应答",
-				}
-				msg, _ := json.Marshal(replymsg)
-				broadcast.Client.Socket.WriteMessage(websocket.TextMessage, msg)
+				replymsg := chat.CreateReplymsg(common.WebsocketOfflineReply, "SYSTEM", common.MsgFlags[common.WebsocketOfflineReply])
+				chat.SendReplyMsg(broadcast.Client, replymsg)
 				StoreMsg(db, id, fmt.Sprintf("%s", string(message)))
 			}
 

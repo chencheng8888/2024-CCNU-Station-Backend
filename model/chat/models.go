@@ -1,6 +1,7 @@
 package chat
 
 import (
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	"gorm.io/gorm"
 	"time"
@@ -31,10 +32,11 @@ type ReplyMsg struct {
 	From    string `json:"from"`
 }
 type Client struct {
-	ID     string
-	SendID string
-	Socket *websocket.Conn
-	Send   chan []byte
+	ID      string
+	SendID  string
+	GroupID string
+	Socket  *websocket.Conn
+	Send    chan []byte
 }
 type Broadcast struct {
 	Client  *Client
@@ -42,17 +44,33 @@ type Broadcast struct {
 	Type    int
 }
 type ClientManager struct {
-	Clients    map[string]*Client
-	Broadcast  chan *Broadcast
-	Reply      chan *Client
-	Register   chan *Client
-	Unregister chan *Client
+	GroupBasic     map[string]*Client
+	Clients        map[string]*Client
+	Broadcast      chan *Broadcast
+	GroupBroadcast chan *Broadcast
+	Reply          chan *Client
+	Register       chan *Client
+	Unregister     chan *Client
 }
 
 var Manager = ClientManager{
-	Clients:    make(map[string]*Client),
-	Broadcast:  make(chan *Broadcast),
-	Reply:      make(chan *Client),
-	Register:   make(chan *Client),
-	Unregister: make(chan *Client),
+	GroupBasic:     make(map[string]*Client),
+	Clients:        make(map[string]*Client),
+	Broadcast:      make(chan *Broadcast),
+	GroupBroadcast: make(chan *Broadcast),
+	Reply:          make(chan *Client),
+	Register:       make(chan *Client),
+	Unregister:     make(chan *Client),
+}
+
+func SendReplyMsg(client *Client, replymsg ReplyMsg) {
+	msg, _ := json.Marshal(replymsg)
+	client.Socket.WriteMessage(websocket.TextMessage, msg)
+}
+func CreateReplymsg(code int, from string, content string) ReplyMsg {
+	return ReplyMsg{
+		Code:    code,
+		From:    from,
+		Content: content,
+	}
 }
