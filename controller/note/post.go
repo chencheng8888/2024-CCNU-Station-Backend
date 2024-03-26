@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"guizizhan/model"
+	"guizizhan/model/activity"
 	"guizizhan/pkg/qiniu"
 	response "guizizhan/response/note"
 	"guizizhan/service/generateID"
@@ -39,12 +40,12 @@ func PostNote(c *gin.Context, db *gorm.DB) {
 	key1, _ := c.GetQuery("key1")
 	url1 := qiniu.GenerateURL(key1)
 
-	var post = model.Post{
+	var post = activity.Post{
 		PostID:       postid,
 		Poster:       posterid,
 		Text:         text,
 		PostLocation: whereint,
-		Time:         time.Now(),
+		Time:         time.Now().Format("2006-01-02 15:04:05"),
 		HeadImage:    student.HeadImage,
 		Image1:       url1,
 		Title:        title,

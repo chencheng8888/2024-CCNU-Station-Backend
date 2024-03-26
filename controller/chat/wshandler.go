@@ -3,13 +3,22 @@ package chathandler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"gorm.io/gorm"
 	"guizizhan/model/chat"
 	"net/http"
 )
 
 var Buildings = [...]string{"1", "2", "3", "4", "5", "6", "7", "8"}
 
-func WsHandler(c *gin.Context) {
+// WsHandler 建立websocket连接
+// @Summary 建立websocket连接
+// @Description 这个只是建立websocket连接，后续的发消息是根据websocket连接来发送的
+// @Produce json
+// @Param uid query string true "自己的ID"
+// @Param touid query string true "对方的ID或者群的ID"
+// @Security Bearer
+// @Router /api/talk [get]
+func WsHandler(c *gin.Context, db *gorm.DB) {
 	uid := c.Query("uid")
 	touid := c.Query("touid")
 	//chat_type := c.Query("type")
@@ -25,26 +34,26 @@ func WsHandler(c *gin.Context) {
 	client := new(chat.Client)
 	if IsGroup(touid) {
 		client = &chat.Client{
-			ID:     uid,
+			ID:      uid,
 			GroupID: touid,
-			SendID: "",
-			Socket: conn,
-			Send:   make(chan []byte),
+			SendID:  "",
+			Socket:  conn,
+			Send:    make(chan []byte),
 		}
-	}else{
+	} else {
 		client = &chat.Client{
-			ID:     Createid(uid, touid),
-			SendID: Createid(touid, uid),
+			ID:      Createid(uid, touid),
+			SendID:  Createid(touid, uid),
 			GroupID: "",
-			Socket: conn,
-			Send:   make(chan []byte),
+			Socket:  conn,
+			Send:    make(chan []byte),
 		}
 	}
 
 	chat.Manager.Register <- client
 
 	//开两个协程用于读写消息
-	go Read(client)
+	go Read(client, db)
 	go Write(client)
 }
 

@@ -3,12 +3,12 @@ package response
 import (
 	"github.com/gin-gonic/gin"
 	"guizizhan/common"
-	"guizizhan/model"
+	"guizizhan/model/activity"
 )
 
 type Treasurehunting_data struct {
-	YNLogin         bool                  `json:"YNLogin"`
-	Treasurehunting model.Treasurehunting `json:"treasurehunting"`
+	YNLogin         bool                     `json:"YNLogin"`
+	Treasurehunting activity.Treasurehunting `json:"treasurehunting"`
 }
 type Treasurehunting_resp struct {
 	Code int                  `json:"code"`
@@ -16,7 +16,7 @@ type Treasurehunting_resp struct {
 	Data Treasurehunting_data `json:"data"`
 }
 
-func GetTheTreasurehunting_ok(c *gin.Context, treasurehunting model.Treasurehunting, msg string) {
+func GetTheTreasurehunting_ok(c *gin.Context, treasurehunting activity.Treasurehunting, msg string) {
 	var data = Treasurehunting_data{
 		YNLogin:         true,
 		Treasurehunting: treasurehunting,

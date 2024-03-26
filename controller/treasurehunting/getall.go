@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"guizizhan/model"
+	"guizizhan/model/activity"
 	response "guizizhan/response/treasurehunting"
 	"strconv"
 )
@@ -24,8 +24,8 @@ func GetAllTreasureHuntings(c *gin.Context, db *gorm.DB) {
 	var msg string
 	wherestring, _ := c.GetQuery("where")
 	whereint, _ := strconv.Atoi(wherestring)
-	var TreasureHuntings []model.Treasurehunting
-	res := db.Model(&model.Treasurehunting{}).Where(&model.Treasurehunting{Treasurelocation: whereint}).Find(&TreasureHuntings)
+	var TreasureHuntings []activity.Treasurehunting
+	res := db.Model(&activity.Treasurehunting{}).Where(&activity.Treasurehunting{Treasurelocation: whereint}).Order("time desc").Find(&TreasureHuntings)
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		msg = "这个人没有发布寻宝活动"
 	} else {

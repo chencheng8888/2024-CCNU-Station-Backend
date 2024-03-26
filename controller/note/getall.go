@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"guizizhan/model"
+	"guizizhan/model/activity"
 	response "guizizhan/response/note"
 	"strconv"
 )
@@ -26,8 +26,8 @@ func GetAllPostNote(c *gin.Context, db *gorm.DB) {
 
 	wherestring, _ := c.GetQuery("where")
 	whereint, _ := strconv.Atoi(wherestring)
-	var posts []model.Post
-	res := db.Model(&model.Post{}).Where(&model.Post{PostLocation: whereint}).Find(&posts)
+	var posts []activity.Post
+	res := db.Model(&activity.Post{}).Where(&activity.Post{PostLocation: whereint}).Order("time desc").Find(&posts)
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		msg = "这个人没有发布帖子"
 	} else {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"guizizhan/model"
+	"guizizhan/model/activity"
 	response "guizizhan/response/recruit"
 	"strconv"
 )
@@ -27,8 +27,8 @@ func GetAllRecruits(c *gin.Context, db *gorm.DB) {
 	wherestring, _ := c.GetQuery("where")
 	whereint, _ := strconv.Atoi(wherestring)
 
-	var recruits []model.Recruit
-	res := db.Model(&model.Recruit{}).Where(&model.Recruit{Where: whereint}).Find(&recruits)
+	var recruits []activity.Recruit
+	res := db.Model(&activity.Recruit{}).Where(&activity.Recruit{Where: whereint}).Order("time desc").Find(&recruits)
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		msg = "这个人没有发布招募活动"
 	} else {

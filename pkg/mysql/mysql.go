@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"guizizhan/model"
+	"guizizhan/model/activity"
+	"guizizhan/model/chat"
 	"log"
 	"os"
 	"time"
@@ -30,7 +32,15 @@ func InitMySQL() (*gorm.DB, error) {
 	}
 
 	//自动迁移
-	err = db.AutoMigrate(&model.Student{}, &model.Traveler{}, &model.Building{}, &model.GroupBasic{}, &model.Contact{}, &model.Post{}, &model.Treasurehunting{}, &model.Recruit{}, &model.Achievement{})
+	err = db.AutoMigrate(&model.Student{},
+		&model.Traveler{},
+		&model.Building{},
+		&model.Contact{}, &activity.Post{},
+		&activity.Treasurehunting{},
+		&activity.Recruit{},
+		&model.Achievement{},
+		&chat.ChatMessage{})
+
 	if err != nil {
 		err = errors.New("自动迁移失败")
 		return nil, err

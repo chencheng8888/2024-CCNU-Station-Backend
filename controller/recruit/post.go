@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"guizizhan/model"
+	"guizizhan/model/activity"
 	response "guizizhan/response/recruit"
 	"guizizhan/service/generateID"
 	"guizizhan/service/tool"
@@ -38,14 +39,14 @@ func PostRecruit(c *gin.Context, db *gorm.DB) {
 
 	recruitid := generateID.GenerateRecruitID(db)
 
-	var recruit = model.Recruit{
+	var recruit = activity.Recruit{
 		RecruitID: recruitid,
 		Poster:    posterid,
 		HeadImage: student.HeadImage,
 		Where:     whereint,
 		Request:   request,
 		Text:      text,
-		Time:      time.Now(),
+		Time:      time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	db.Create(&recruit)

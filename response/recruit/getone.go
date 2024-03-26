@@ -3,12 +3,12 @@ package response
 import (
 	"github.com/gin-gonic/gin"
 	"guizizhan/common"
-	"guizizhan/model"
+	"guizizhan/model/activity"
 )
 
 type Recruit_data struct {
-	YNLogin bool          `json:"YNLogin"`
-	Recruit model.Recruit `json:"recruit"`
+	YNLogin bool             `json:"YNLogin"`
+	Recruit activity.Recruit `json:"recruit"`
 }
 type GetRecruit_resp struct {
 	Code int          `json:"code"`
@@ -16,7 +16,7 @@ type GetRecruit_resp struct {
 	Data Recruit_data `json:"data"`
 }
 
-func GetTheRecruit_ok(c *gin.Context, recruit model.Recruit, msg string) {
+func GetTheRecruit_ok(c *gin.Context, recruit activity.Recruit, msg string) {
 	var data = Recruit_data{
 		YNLogin: true,
 		Recruit: recruit,

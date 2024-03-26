@@ -3,7 +3,7 @@ package generateID
 import (
 	"errors"
 	"gorm.io/gorm"
-	"guizizhan/model"
+	"guizizhan/model/activity"
 	"math/rand"
 	"time"
 )
@@ -28,7 +28,7 @@ func GeneratePostID(db *gorm.DB) string {
 	var PostID string
 	for {
 		PostID = GenerateNumericID(10)
-		res := db.Model(&model.Post{}).First(&model.Post{PostID: PostID})
+		res := db.Model(&activity.Post{}).First(&activity.Post{PostID: PostID})
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			break
 		}
@@ -40,7 +40,7 @@ func GenerateRecruitID(db *gorm.DB) string {
 	var PostID string
 	for {
 		PostID = GenerateNumericID(10)
-		res := db.Model(&model.Recruit{}).First(&model.Recruit{RecruitID: PostID})
+		res := db.Model(&activity.Recruit{}).First(&activity.Recruit{RecruitID: PostID})
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			break
 		}
@@ -52,7 +52,7 @@ func GenerateTreasureID(db *gorm.DB) string {
 	var PostID string
 	for {
 		PostID = GenerateNumericID(10)
-		res := db.Model(&model.Treasurehunting{}).First(&model.Treasurehunting{TreasureID: PostID})
+		res := db.Model(&activity.Treasurehunting{}).First(&activity.Treasurehunting{TreasureID: PostID})
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			break
 		}

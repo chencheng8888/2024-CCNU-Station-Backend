@@ -5,7 +5,7 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"guizizhan/controller"
+	chathandler "guizizhan/controller/chat"
 	"guizizhan/controller/note"
 	"guizizhan/controller/recruit"
 	"guizizhan/controller/treasurehunting"
@@ -119,13 +119,8 @@ func RouterInit(db *gorm.DB) *gin.Engine {
 	}
 	ChatGroup := a.Group("/api/talk")
 	{
-		ChatGroup.POST("/private_chat", func(c *gin.Context) {
-			user := controller.Createclient(c)
-			controller.PrivateChat(&user)
-		})
-		ChatGroup.GET("/public_chat", func(c *gin.Context) {
-			user := controller.Createclient(c)
-			controller.PublicChat(&user)
+		ChatGroup.GET("", token.JWTAuthMiddleware(), func(c *gin.Context) {
+			chathandler.WsHandler(c, db)
 		})
 	}
 	a.GET("/ping", func(c *gin.Context) {

@@ -37,4 +37,5 @@ func UpdateAchievement(c *gin.Context, db *gorm.DB) {
 	AchIDStr := c.Query("achid")
 	Achid, _ := strconv.Atoi(AchIDStr)
 	model.UpdateAchievement(stuid, Achid, db)
+	response.Updateachi_ok(c)
 }

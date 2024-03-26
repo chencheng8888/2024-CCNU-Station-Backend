@@ -3,12 +3,12 @@ package response
 import (
 	"github.com/gin-gonic/gin"
 	"guizizhan/common"
-	"guizizhan/model"
+	"guizizhan/model/activity"
 )
 
 type Notes_data struct {
-	YNLogin bool         `json:"YNLogin"`
-	Notes   []model.Post `json:"notes"`
+	YNLogin bool            `json:"YNLogin"`
+	Notes   []activity.Post `json:"notes"`
 }
 type GetNotes_resp struct {
 	Code int        `json:"code"`
@@ -16,7 +16,7 @@ type GetNotes_resp struct {
 	Data Notes_data `json:"data"`
 }
 
-func Getallnotes_ok(c *gin.Context, posts []model.Post, msg string) {
+func Getallnotes_ok(c *gin.Context, posts []activity.Post, msg string) {
 
 	var data = Notes_data{
 		YNLogin: true,

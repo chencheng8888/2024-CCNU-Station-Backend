@@ -18,7 +18,7 @@ func Getachi_ok(c *gin.Context, finished string) {
 	c.JSON(200, gin.H{
 		"code": SUCCESS,
 		"data": data,
-		"Msg":  "成功获取所有成就信息",
+		"msg":  "成功获取所有成就信息",
 	})
 }
 func Getachi_fail(c *gin.Context) {
@@ -28,6 +28,12 @@ func Getachi_fail(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"code": FAIL,
 		"data": data,
-		"Msg":  "未找到该用户",
+		"msg":  "未找到该用户",
+	})
+}
+func Updateachi_ok(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"code": SUCCESS,
+		"msg":  "修改成功",
 	})
 }

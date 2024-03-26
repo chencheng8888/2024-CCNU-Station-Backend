@@ -17,6 +17,7 @@ const (
 	WebsocketLimit          = 50006
 	ErrDataformat           = 50007 //数据格式不正确
 	ReadMsgSUCCESS          = 50008 //读取消息成功
+	GroupmsgSUCCESS         = 50009 //群聊消息发送成功
 )
 
 var MsgFlags = map[int]string{
@@ -33,4 +34,5 @@ var MsgFlags = map[int]string{
 	WebsocketLimit:          "请求收到限制",
 	ErrDataformat:           "数据格式不正确",
 	ReadMsgSUCCESS:          "读取消息成功",
+	GroupmsgSUCCESS:         "群聊消息发送成功",
 }

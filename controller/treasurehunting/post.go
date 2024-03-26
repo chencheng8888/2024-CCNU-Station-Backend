@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"guizizhan/model"
+	"guizizhan/model/activity"
 	"guizizhan/pkg/qiniu"
 	response "guizizhan/response/treasurehunting"
 	"guizizhan/service/generateID"
@@ -19,7 +20,9 @@ import (
 // @Accept json
 // @Produce json
 // @Param image query string true "图片文件的Key"
-// @Param content formData string true "活动内容"
+// @Param clue formData string true "线索"
+// @Param deadline formData string true "截至日期"
+// @Param title formData string true "活动标题"
 // @Param where query string true "寻宝地点"
 // @Param thing formData string true "寻找的物品"
 // @Security Bearer
@@ -30,23 +33,28 @@ import (
 func PostTreasureHunting(c *gin.Context, db *gorm.DB) {
 	key, _ := c.GetQuery("image")
 	URL := qiniu.GenerateURL(key)
-	content := c.PostForm("content")
+	//content := c.PostForm("content")
 	wherestring, _ := c.GetQuery("where")
 	whereint, _ := strconv.Atoi(wherestring)
+	title := c.PostForm("title")
 	thing := c.PostForm("thing")
+	deadline := c.PostForm("deadline")
+	clue := c.PostForm("clue")
 	stuid, yn := tool.GetStudentID(c)
 	student, _ := model.FindStudfromID(stuid, db)
 	treasureid := generateID.GenerateTreasureID(db)
-	var treasurehunting model.Treasurehunting
-	treasurehunting = model.Treasurehunting{
+	var treasurehunting activity.Treasurehunting
+	treasurehunting = activity.Treasurehunting{
 		TreasureID:       treasureid,
 		Image:            URL,
 		Thing:            thing,
 		Treasurelocation: whereint,
 		Poster:           stuid,
 		HeadImage:        student.HeadImage,
-		Time:             time.Now(),
-		Text:             content,
+		Time:             time.Now().Format("2006-01-02 15:04:05"),
+		Deadline:         deadline,
+		Clue:             clue,
+		Title:            title,
 	}
 
 	db.Create(&treasurehunting)
