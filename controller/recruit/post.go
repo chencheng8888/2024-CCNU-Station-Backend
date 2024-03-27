@@ -18,9 +18,10 @@ import (
 // @ID post-recruit
 // @Accept json
 // @Produce json
-// @Param where query string true "招募地点"
+// @Param where formData string true "招募地点"
 // @Param request formData string true "招募要求"
-// @Param text formData string true "招募详情"
+// @Param title formData string true "活动名称"
+// @Param time formData string true "活动时间"
 // @Security Bearer
 // @Api(tags="发布")
 // @Success 200 {object} response.Postrecruit_resp
@@ -30,23 +31,23 @@ func PostRecruit(c *gin.Context, db *gorm.DB) {
 	posterid, yn := tool.GetStudentID(c)
 	student, _ := model.FindStudfromID(posterid, db)
 
-	wherestring, _ := c.GetQuery("where")
+	wherestring := c.PostForm("where")
 	whereint, _ := strconv.Atoi(wherestring)
-
 	request := c.PostForm("request")
-
-	text := c.PostForm("text")
+	title := c.PostForm("title")
+	acitivity_time := c.PostForm("time")
 
 	recruitid := generateID.GenerateRecruitID(db)
 
 	var recruit = activity.Recruit{
-		RecruitID: recruitid,
-		Poster:    posterid,
-		HeadImage: student.HeadImage,
-		Where:     whereint,
-		Request:   request,
-		Text:      text,
-		Time:      time.Now().Format("2006-01-02 15:04:05"),
+		RecruitID:    recruitid,
+		Poster:       posterid,
+		HeadImage:    student.HeadImage,
+		Where:        whereint,
+		Request:      request,
+		Title:        title,
+		PostTime:     time.Now().Format("2006-01-02 15:04:05"),
+		ActivityTime: acitivity_time,
 	}
 
 	db.Create(&recruit)

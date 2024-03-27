@@ -27,13 +27,13 @@ func GetTheRecruit_ok(c *gin.Context, recruit activity.Recruit, msg string) {
 		"data": data,
 	})
 }
-func GetTheRecruit_fail(c *gin.Context) {
+func GetTheRecruit_fail(c *gin.Context, msg string) {
 	var data = Recruit_data{
 		YNLogin: false,
 	}
 	c.JSON(200, gin.H{
 		"code": common.FAIL,
-		"msg":  "未登录",
+		"msg":  msg,
 		"data": data,
 	})
 }
