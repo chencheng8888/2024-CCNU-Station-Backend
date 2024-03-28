@@ -22,14 +22,8 @@ func GetAllRecruits(c *gin.Context, db *gorm.DB) {
 	var msg string
 	//_, yn := tool.GetStudentID(c)
 
-	poster, yn := c.GetQuery("stuid")
-
-	if !yn {
-		response.GetTheRecruit_fail(c, "未获取到用户ID")
-	}
-
 	var recruits []activity.Recruit
-	res := db.Model(&activity.Recruit{}).Where(&activity.Recruit{Poster: poster}).Order("post_time desc").Find(&recruits)
+	res := db.Model(&activity.Recruit{}).Order("post_time desc").Find(&recruits)
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		msg = "这个人没有发布招募活动"
 	} else {
