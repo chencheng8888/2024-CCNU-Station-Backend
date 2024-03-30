@@ -8,7 +8,6 @@ import (
 	response "guizizhan/response/recruit"
 	"guizizhan/service/generateID"
 	"guizizhan/service/tool"
-	"strconv"
 	"time"
 )
 
@@ -31,8 +30,7 @@ func PostRecruit(c *gin.Context, db *gorm.DB) {
 	posterid, yn := tool.GetStudentID(c)
 	student, _ := model.FindStudfromID(posterid, db)
 
-	wherestring := c.PostForm("where")
-	whereint, _ := strconv.Atoi(wherestring)
+	where := c.PostForm("where")
 	request := c.PostForm("request")
 	title := c.PostForm("title")
 	acitivity_time := c.PostForm("time")
@@ -43,7 +41,7 @@ func PostRecruit(c *gin.Context, db *gorm.DB) {
 		RecruitID:    recruitid,
 		Poster:       posterid,
 		HeadImage:    student.HeadImage,
-		Where:        whereint,
+		Where:        where,
 		Request:      request,
 		Title:        title,
 		PostTime:     time.Now().Format("2006-01-02 15:04:05"),
